@@ -5,8 +5,9 @@ services:
   app:
     image: roquefort/prometheus-jira-cloud-exporter:latest
     build: .
+    env_file: ./.env
     restart: always
     ports:
-      - 8000:8000
+      - ${PORT}:${PORT}
     volumes:
       - ./config.py:/app/config.py:ro

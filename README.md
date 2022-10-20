@@ -50,6 +50,6 @@ PORT=8000
 ```
 3. To run this in Docker, just run the following:
 ```
-docker-compose up --build
+docker compose --env-file .env up --build -d
 ```
 4. Navigate to http://localhost:8000 (if you specified as port 8000). Your metrics should be clearly exposed.
