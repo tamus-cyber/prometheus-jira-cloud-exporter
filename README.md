@@ -27,30 +27,29 @@ I've [created a Docker image](https://hub.docker.com/repository/docker/roquefort
 Using this app is simple:
 
 1. Download the project, and extract it to a folder on your computer
-2. In this folder, create a "config.py" file containing the following contents:
+2. In this folder, create a ".env" file containing the following contents:
 ```
 # The URL of your Jira Cloud instance
-instance = 'https://myinstance.atlassian.net'
+JIRA_URL='https://myinstance.atlassian.net'
 
 # The username of the user authentication with Jira's API
-user = 'john.doe@gmail.com'
+JIRA_USER='john.doe@gmail.com'
 
 # The API key associated with your user
-apikey = 'XXXXXXXXXXXXXXXXXX'
+JIRA_API_KEY='XXXXXXXXXXXXXXXXXX'
 
 # The JQL query you want to use to search Jira. Leave blank to search all issues.
-jql = ''
+JQL_QUERY=''
 
 # The interval (in seconds) to search Jira. Do not set this too low, or there is a chance
 # of overloading your instance.
-interval = '900'
+INTERVAL='900'
+
+# Port to host the exporter data on (defaults to 8000 if not specified)
+PORT=8000
 ```
 3. To run this in Docker, just run the following:
 ```
-docker-compose up
+docker-compose up --build
 ```
-4. Navigate to http://localhost:8000. Your metrics should be clearly exposed.
-
-## Note
----
-This probably works with Jira Server, too. This is untested.
+4. Navigate to http://localhost:8000 (if you specified as port 8000). Your metrics should be clearly exposed.

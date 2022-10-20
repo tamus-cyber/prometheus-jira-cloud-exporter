@@ -1,10 +1,9 @@
 from prometheus_client.core import GaugeMetricFamily, CounterMetricFamily, REGISTRY
 from prometheus_client import start_http_server
 from jira import JIRA, JIRAError
-import config
 import time
 
-jira = JIRA(basic_auth=(config.user, config.apikey), options={"server": config.instance})
+jira = None
 
 
 class IssueCollector:
@@ -27,12 +26,13 @@ class IssueCollector:
         return result
 
     @classmethod
-    def construct(self, jql):
-
+    def construct(self, jql, url, user, apikey):
+        global jira
+        jira = JIRA(basic_auth=(user, apikey), options={"server": url})
         try:
 
             prom_labels = []
-            result = IssueCollector.search(config.jql)
+            result = IssueCollector.search(jql)
 
             # Loop over the JQL results
             while bool(result):
@@ -73,7 +73,7 @@ class IssueCollector:
                 # Increment the results via pagination
                 self.block_num += 1
                 time.sleep(2)
-                result = IssueCollector.search(config.jql)
+                result = IssueCollector.search(jql)
             jira.close()
 
             # Convert nested lists into a list of tuples, so that we may hash and count duplicates
