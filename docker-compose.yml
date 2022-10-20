@@ -9,4 +9,4 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./config.py:/config.py:ro
+      - ./config.py:/app/config.py:ro

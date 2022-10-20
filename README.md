@@ -1,4 +1,7 @@
 # prometheus-jira-cloud-exporter
+
+Forked from [https://github.com/R0quef0rt/prometheus-jira-cloud-exporter](https://github.com/R0quef0rt/prometheus-jira-cloud-exporter)
+
 ## Overview
 ---
 While there already exist Prometheus exporter plugins for Jira Server, it is not possible to use these plugins on Jira Cloud.
