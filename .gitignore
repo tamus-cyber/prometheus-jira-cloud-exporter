@@ -128,8 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Hide secrets file
-config.py
+# Hide VS Code file
+.vscode/
 
 # Hide coderunner file
 tempCodeRunnerFile.py
