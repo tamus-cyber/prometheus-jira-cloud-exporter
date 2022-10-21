@@ -39,8 +39,8 @@ class IssueCollector:
             self.custom_fields = {}
             self.custom_fields_str = ""
         try:
-
             prom_labels = []
+            self.block_num = 0
             result = IssueCollector.search(jql)
 
             # Loop over the JQL results
@@ -99,6 +99,8 @@ class IssueCollector:
             self.jira.close()
 
             # Convert nested lists into a list of tuples, so that we may hash and count duplicates
+            # Reset prom_output
+            self.prom_output = {}
             for li in prom_labels:
                 self.prom_output.setdefault(tuple(li), list()).append(1)
             for k, v in self.prom_output.items():

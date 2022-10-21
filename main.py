@@ -30,3 +30,4 @@ if __name__ == "__main__":
     # Run the collector every INTERVAL seconds
     while True:
         time.sleep(int(INTERVAL))
+        IssueCollector.construct(JQL_QUERY, JIRA_URL, JIRA_USER, JIRA_API_KEY)
