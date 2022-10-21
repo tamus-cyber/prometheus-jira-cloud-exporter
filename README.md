@@ -53,3 +53,14 @@ PORT=8000
 docker compose --env-file .env up --build -d
 ```
 4. Navigate to http://localhost:8000 (if you specified as port 8000). Your metrics should be clearly exposed.
+
+## Custom Jira fields
+
+You may notice that some Jira fields you create are labeled as customfield_XXXXXX. In order to counter this naming schema and make labels clearer, make a file called custom_field_map.json. All is needs is the following:
+
+```json
+{
+    "customfield_XXXXX1": "friendly_name1",
+    "customfield_XXXXX2": "friendly_name2",
+}
+```

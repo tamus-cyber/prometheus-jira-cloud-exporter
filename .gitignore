@@ -133,3 +133,4 @@ dmypy.json
 
 # Hide coderunner file
 tempCodeRunnerFile.py
+custom_field_map.json
