@@ -1,13 +1,11 @@
-from prometheus_client.core import GaugeMetricFamily, CounterMetricFamily, REGISTRY
-from prometheus_client import start_http_server
+from prometheus_client.core import GaugeMetricFamily, REGISTRY
 from jira import JIRA, JIRAError
 import time
-
-jira = None
 
 
 class IssueCollector:
 
+    jira = None
     block_num = 0
     prom_output = {}
 
@@ -16,7 +14,7 @@ class IssueCollector:
 
         # Search Jira API
         block_size = 100
-        result = jira.search_issues(
+        result = self.jira.search_issues(
             jql,
             startAt=self.block_num * block_size,
             maxResults=block_size,
@@ -27,8 +25,7 @@ class IssueCollector:
 
     @classmethod
     def construct(self, jql, url, user, apikey):
-        global jira
-        jira = JIRA(basic_auth=(user, apikey), options={"server": url})
+        self.jira = JIRA(basic_auth=(user, apikey), options={"server": url})
         try:
 
             prom_labels = []
@@ -74,7 +71,7 @@ class IssueCollector:
                 self.block_num += 1
                 time.sleep(2)
                 result = IssueCollector.search(jql)
-            jira.close()
+            self.jira.close()
 
             # Convert nested lists into a list of tuples, so that we may hash and count duplicates
             for li in prom_labels:
@@ -84,7 +81,7 @@ class IssueCollector:
             return self.prom_output
         except (JIRAError, AttributeError):
 
-            jira.close()
+            self.jira.close()
 
     @classmethod
     def collect(self):
