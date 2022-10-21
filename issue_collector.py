@@ -1,6 +1,7 @@
 from prometheus_client.core import GaugeMetricFamily, REGISTRY
 from jira import JIRA, JIRAError
 import time
+from loguru import logger
 
 
 class IssueCollector:
@@ -33,11 +34,12 @@ class IssueCollector:
 
             # Loop over the JQL results
             while bool(result):
-
                 for issue in result:
-
                     # Assign Jira attributes to variables
                     project = str(issue.fields.project)
+                    summary = str(issue.fields.summary)
+                    created = str(issue.fields.created)
+                    resolutiondate = str(issue.fields.resolutiondate)
                     assignee = str(issue.fields.assignee)
                     issue_type = str(issue.fields.issuetype)
                     status = str(issue.fields.status)
@@ -49,6 +51,9 @@ class IssueCollector:
                     # Construct the list of labels from attributes
                     prom_label = [
                         project,
+                        summary,
+                        created,
+                        resolutiondate,
                         assignee,
                         issue_type,
                         status,
@@ -92,6 +97,9 @@ class IssueCollector:
             "Jira issues",
             labels=[
                 "project",
+                "summary",
+                "created",
+                "resolutiondate",
                 "assignee",
                 "issue_type",
                 "status",
