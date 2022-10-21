@@ -1,6 +1,6 @@
 # prometheus-jira-cloud-exporter
 
-Forked from [https://github.com/R0quef0rt/prometheus-jira-cloud-exporter](https://github.com/R0quef0rt/prometheus-jira-cloud-exporter)
+Heavily modified version of [https://github.com/R0quef0rt/prometheus-jira-cloud-exporter](https://github.com/R0quef0rt/prometheus-jira-cloud-exporter)
 
 ## Overview
 ---

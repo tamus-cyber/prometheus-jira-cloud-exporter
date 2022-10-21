@@ -33,7 +33,6 @@ class IssueCollector:
         try:
             with open("custom_field_map.json", "r") as f:
                 self.custom_fields = json.load(f)
-                logger.debug(f"Custom fields: {self.custom_fields}")
                 self.custom_fields_str = ", ".join(self.custom_fields.keys())
         except FileNotFoundError:
             self.custom_fields = {}
