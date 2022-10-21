@@ -58,7 +58,6 @@ class IssueCollector:
                     reporter = str(issue.fields.reporter)
                     components = issue.fields.components
                     labels = issue.fields.labels
-                    root_cause = str(issue.fields.customfield_10320)
 
                     # Get custom fields
                     custom_fields = {}
