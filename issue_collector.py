@@ -22,7 +22,7 @@ class IssueCollector:
             jql,
             startAt=self.block_num * block_size,
             maxResults=block_size,
-            fields=f"project, summary, components, labels, status, issuetype, resolution, created, resolutiondate, reporter, assignee, status, description, {self.custom_fields_str}",
+            fields=f"project, summary, components, labels, status, issuetype, resolution, created, resolutiondate, reporter, updated, assignee, status, description, {self.custom_fields_str}",
         )
         return result
 
@@ -47,14 +47,16 @@ class IssueCollector:
                 for issue in result:
                     # Assign Jira attributes to variables
                     project = str(issue.fields.project)
+                    issue_key = str(issue.key)
                     summary = str(issue.fields.summary)
                     created = str(issue.fields.created)
                     resolutiondate = str(issue.fields.resolutiondate)
                     assignee = str(issue.fields.assignee)
                     issue_type = str(issue.fields.issuetype)
                     status = str(issue.fields.status)
-                    resolution = str(issue.fields.resolution)
                     reporter = str(issue.fields.reporter)
+                    resolution = str(issue.fields.resolution)
+                    updated = str(issue.fields.updated)
                     components = issue.fields.components
                     labels = issue.fields.labels
 
@@ -66,6 +68,7 @@ class IssueCollector:
                     # Construct the list of labels from attributes
                     prom_label = [
                         project,
+                        issue_key,
                         summary,
                         created,
                         resolutiondate,
@@ -73,6 +76,7 @@ class IssueCollector:
                         issue_type,
                         status,
                         resolution,
+                        updated,
                         reporter,
                     ]
 
@@ -114,6 +118,7 @@ class IssueCollector:
         # Set up the Issues Prometheus gauge
         labels=[
                 "project",
+                "issue_key",
                 "summary",
                 "created",
                 "resolutiondate",
@@ -121,6 +126,7 @@ class IssueCollector:
                 "issue_type",
                 "status",
                 "resolution",
+                "updated",
                 "reporter",
                 "component",
                 "label",

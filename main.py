@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from prometheus_client.core import REGISTRY
 from prometheus_client import start_http_server
 from issue_collector import IssueCollector
