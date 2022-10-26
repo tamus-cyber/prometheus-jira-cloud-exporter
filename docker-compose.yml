@@ -10,4 +10,4 @@ services:
     ports:
       - ${PORT}:${PORT}
     volumes:
-      - ./config.py:/app/config.py:ro
+      - ./.env:/app/.env:ro
