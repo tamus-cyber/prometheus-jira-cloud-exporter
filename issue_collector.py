@@ -22,7 +22,7 @@ class IssueCollector:
             jql,
             startAt=self.block_num * block_size,
             maxResults=block_size,
-            fields=f"project, summary, components, labels, status, issuetype, resolution, created, resolutiondate, reporter, updated, assignee, status, description, {self.custom_fields_str}",
+            fields=f"project, summary, components, labels, status, issuetype, resolution, created, resolutiondate, reporter, updated, assignee, status, {self.custom_fields_str}",
         )
         return result
 
@@ -47,6 +47,7 @@ class IssueCollector:
                 for issue in result:
                     # Assign Jira attributes to variables
                     project = str(issue.fields.project)
+                    project_name = str(issue.fields.project.name)
                     issue_key = str(issue.key)
                     summary = str(issue.fields.summary)
                     created = str(issue.fields.created)
@@ -68,6 +69,7 @@ class IssueCollector:
                     # Construct the list of labels from attributes
                     prom_label = [
                         project,
+                        project_name,
                         issue_key,
                         summary,
                         created,
@@ -118,6 +120,7 @@ class IssueCollector:
         # Set up the Issues Prometheus gauge
         labels=[
                 "project",
+                "project_name",
                 "issue_key",
                 "summary",
                 "created",
