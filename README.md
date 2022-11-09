@@ -64,3 +64,13 @@ You may notice that some Jira fields you create are labeled as customfield_XXXXX
     "customfield_XXXXX2": "friendly_name2",
 }
 ```
+
+You can also use a `*` in order to traverse all dicts/lists to get to the value. Example:
+
+```json
+{
+    "customfield_XXXXX1": "friendly_name1",
+    "customfield_XXXXX2": "friendly_name2",
+    "customfield_XXXXX3.*.value": "friendly_name3",
+}
+```
