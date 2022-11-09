@@ -161,6 +161,7 @@ class IssueCollector:
 
     
     @classmethod
+    # Credit: https://stackoverflow.com/a/67225625
     def walktree(self, tree, at=lambda node: not isinstance(node, dict), prefix=(), 
                 flattennode=lambda node:isinstance(node, (list, tuple, set))):
         """
