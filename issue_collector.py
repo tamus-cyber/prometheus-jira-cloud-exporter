@@ -15,19 +15,20 @@ class IssueCollector:
 
     @classmethod
     def search(self, jql):
-
         # Search Jira API
         block_size = 100
         result = self.jira.search_issues(
             jql,
-            startAt=self.block_num * block_size,
-            maxResults=block_size,
+            maxResults=False,
             fields=f"project, summary, components, labels, status, issuetype, resolution, created, resolutiondate, reporter, updated, assignee, status, {self.custom_fields_str}",
         )
+        logger.debug("Response length: " + str(len(result)))
         return result
 
     @classmethod
     def construct(self, jql, url, user, apikey):
+        # DEBUG: Log amount of time this takes
+        start_time = time.time()
         self.jira = JIRA(basic_auth=(user, apikey), options={"server": url})
         # Get custom fields from custom_field_map.json if it exists
         try:
@@ -47,72 +48,70 @@ class IssueCollector:
             result = IssueCollector.search(jql)
 
             # Loop over the JQL results
-            while bool(result):
-                for issue in result:
-                    # Write to JSON
-                    with open("test.json", "w") as f:
-                        json.dump(issue.raw, f, indent=4)
-                    # Assign Jira attributes to variables
-                    project = str(issue.fields.project)
-                    project_name = str(issue.fields.project.name)
-                    issue_key = str(issue.key)
-                    summary = str(issue.fields.summary)
-                    created = str(issue.fields.created)
-                    resolutiondate = str(issue.fields.resolutiondate)
-                    assignee = str(issue.fields.assignee)
-                    issue_type = str(issue.fields.issuetype)
-                    status = str(issue.fields.status)
-                    reporter = str(issue.fields.reporter)
-                    resolution = str(issue.fields.resolution)
-                    updated = str(issue.fields.updated)
-                    components = issue.fields.components
-                    labels = issue.fields.labels
+            for issue in result:
+                # Write to JSON
+                with open("test.json", "w") as f:
+                    json.dump(issue.raw, f, indent=4)
+                # Assign Jira attributes to variables
+                project = str(issue.fields.project)
+                project_name = str(issue.fields.project.name)
+                issue_key = str(issue.key)
+                summary = str(issue.fields.summary)
+                created = str(issue.fields.created)
+                resolutiondate = str(issue.fields.resolutiondate)
+                assignee = str(issue.fields.assignee)
+                issue_type = str(issue.fields.issuetype)
+                status = str(issue.fields.status)
+                reporter = str(issue.fields.reporter)
+                resolution = str(issue.fields.resolution)
+                updated = str(issue.fields.updated)
+                components = issue.fields.components
+                labels = issue.fields.labels
 
-                    # Get custom fields
-                    custom_fields = {}
-                    for key, value in self.custom_fields.items():
-                        # If the key has a . in it, it's a nested field, use recursion to get the value
-                        if "." in key:
-                            custom_fields[value] = self.get_nested_field(issue.raw['fields'], key)
-                        else:
-                            custom_fields[value] = str(issue.fields.__dict__[key])
-
-                    # Construct the list of labels from attributes
-                    prom_label = [
-                        project,
-                        project_name,
-                        issue_key,
-                        summary,
-                        created,
-                        resolutiondate,
-                        assignee,
-                        issue_type,
-                        status,
-                        resolution,
-                        updated,
-                        reporter,
-                    ]
-
-                    # Add custom fields to the list of labels
-                    for key, value in custom_fields.items():
-                        prom_label.append(value)
-
-                    if components:
-                        for component in components:
-                            prom_label.append(str(component))
+                # Get custom fields
+                custom_fields = {}
+                for key, value in self.custom_fields.items():
+                    # If the key has a . in it, it's a nested field, use recursion to get the value
+                    if "." in key:
+                        custom_fields[value] = self.get_nested_field(issue.raw['fields'], key)
                     else:
-                        prom_label.append("None")
-                    if labels:
-                        for label in labels:
-                            prom_label.append(str(label))
-                    else:
-                        prom_label.append("None")
-                    prom_labels.append(prom_label)
-                # Increment the results via pagination
-                self.block_num += 1
-                time.sleep(2)
-                result = IssueCollector.search(jql)
+                        custom_fields[value] = str(issue.fields.__dict__[key])
+
+                # Construct the list of labels from attributes
+                prom_label = [
+                    project,
+                    project_name,
+                    issue_key,
+                    summary,
+                    created,
+                    resolutiondate,
+                    assignee,
+                    issue_type,
+                    status,
+                    resolution,
+                    updated,
+                    reporter,
+                ]
+
+                # Add custom fields to the list of labels
+                for key, value in custom_fields.items():
+                    prom_label.append(value)
+
+                if components:
+                    for component in components:
+                        prom_label.append(str(component))
+                else:
+                    prom_label.append("None")
+                if labels:
+                    for label in labels:
+                        prom_label.append(str(label))
+                else:
+                    prom_label.append("None")
+                prom_labels.append(prom_label)
             self.jira.close()
+            # DEBUG: Log amount of time this takes
+            end_time = time.time()
+            logger.debug(f"Time to construct: {end_time - start_time}")
 
             # Convert nested lists into a list of tuples, so that we may hash and count duplicates
             # Reset prom_output
@@ -125,6 +124,7 @@ class IssueCollector:
         except (JIRAError, AttributeError):
             logger.exception("Error while searching Jira")
             self.jira.close()
+        
 
     @classmethod
     def collect(self):
