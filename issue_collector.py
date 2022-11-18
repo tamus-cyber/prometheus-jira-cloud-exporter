@@ -19,6 +19,7 @@ class IssueCollector:
         block_size = 100
         result = self.jira.search_issues(
             jql,
+            startAt=0,
             maxResults=False,
             fields=f"project, summary, components, labels, status, issuetype, resolution, created, resolutiondate, reporter, updated, assignee, status, {self.custom_fields_str}",
         )
@@ -26,10 +27,10 @@ class IssueCollector:
         return result
 
     @classmethod
-    def construct(self, jql, url, user, apikey):
+    def construct(self, jql, url, user, apikey, async_workers=10):
         # DEBUG: Log amount of time this takes
         start_time = time.time()
-        self.jira = JIRA(basic_auth=(user, apikey), options={"server": url})
+        self.jira = JIRA(basic_auth=(user, apikey), options={"server": url}, async_=True, async_workers=async_workers)
         # Get custom fields from custom_field_map.json if it exists
         try:
             with open("custom_field_map.json", "r") as f:

@@ -1,4 +1,4 @@
 prometheus_client
-jira
+jira[async]
 python-dotenv
 loguru
