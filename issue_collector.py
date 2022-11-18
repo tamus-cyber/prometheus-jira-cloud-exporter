@@ -27,7 +27,7 @@ class IssueCollector:
         return result
 
     @classmethod
-    def construct(self, jql, url, user, apikey, async_workers=10):
+    def construct(self, jql, url, user, apikey, async_workers=5):
         # DEBUG: Log amount of time this takes
         start_time = time.time()
         self.jira = JIRA(basic_auth=(user, apikey), options={"server": url}, async_=True, async_workers=async_workers)

@@ -47,6 +47,9 @@ INTERVAL='900'
 
 # Port to host the exporter data on (defaults to 8000 if not specified)
 PORT=8000
+
+# Number of threads to do Jira queries with
+ASYNC_WORKERS=5
 ```
 3. To run this in Docker, just run the following:
 ```
